@@ -48,7 +48,36 @@ def main():
         # You can specify multiple window sizes for each link here.
         # For example, [(1024, 768), (768, 1024)] to capture screenshots for two different sizes.
         # You can add more sizes or modify them as needed.
-        window_sizes = [(1024, 768), (768, 1024)]
+        window_sizes = [
+    # Desktops
+    (1920, 1080),  # Standard desktop size
+    (1366, 768),   # Common laptop size
+    (1440, 900),   # Widescreen laptop size
+
+    # Tablets
+    (768, 1024),   # iPad portrait
+    (1024, 768),   # iPad landscape
+    (800, 1280),   # Samsung Galaxy Tab portrait
+    (1280, 800),   # Samsung Galaxy Tab landscape
+
+    # Mobiles
+    (375, 667),    # iPhone 6/7/8 portrait
+    (667, 375),    # iPhone 6/7/8 landscape
+    (414, 736),    # iPhone 6/7/8 Plus portrait
+    (736, 414),    # iPhone 6/7/8 Plus landscape
+    (360, 640),    # Samsung Galaxy S5 portrait
+    (640, 360),    # Samsung Galaxy S5 landscape
+    (375, 812),    # iPhone X portrait
+    (812, 375),    # iPhone X landscape
+
+    # Other Devices
+    (320, 568),    # iPhone 5/SE portrait
+    (568, 320),    # iPhone 5/SE landscape
+    (768, 1280),   # Nexus 4 portrait
+    (1280, 768),   # Nexus 4 landscape
+    (320, 480),    # iPhone 4 portrait
+    (480, 320),    # iPhone 4 landscape
+]
         
         take_screenshot(driver, link, base_filename, link_folder, link_index, window_sizes)
 
