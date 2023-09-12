@@ -1,0 +1,109 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# List of links to test
+links_to_test = [
+    'https://lp.kbtraf.com/au-bfc/',
+    'https://lp.kbtraf.com/au-freak/',
+    # Add more links as needed
+]
+
+# Initialize the Safari driver
+driver = webdriver.Chrome()
+
+# Function to perform registration and testing
+def perform_registration(link):
+    try:
+        # Navigate to the link
+        print(f'Navigating to: {link}')
+        driver.get(link)
+        
+        # Click the "GET IT NOW" button by XPath (if it doesn't have an ID)
+        print('Clicking "GET IT NOW" button')
+        wait = WebDriverWait(driver, 10)
+        get_it_now_button = wait.until(EC.element_to_be_clickable((By.ID, 'submit-btn')))
+        get_it_now_button.click()
+
+        
+        # Find and fill in the email input by ID
+        email_input = driver.find_element(By.ID, 'email')
+        random_email = generate_random_email()
+        print(f'Filling in email input with: {random_email}')
+        email_input.send_keys(random_email)
+        
+        # Write email to the log file
+        with open('test_accs_automation.txt', 'a') as file:
+            file.write(random_email + '\n')
+        
+        # Find and fill in the password input by ID
+        password_input = driver.find_element(By.ID, 'password')
+        print('Filling in password input with: 193786Az()')
+        password_input.send_keys('193786Az()')
+
+        # Wait for "Sign up now" button to be clickable based on the determined XPath
+        print('Waiting for "Sign up now" button to be clickable')
+        wait = WebDriverWait(driver, 3)
+
+        # Determine which XPath to use based on the link
+        if 'au-bfc' in link:
+            # Use the first XPath for the first link
+            sign_up_button_xpath = '/html/body/div[3]/div[3]/div/div[3]/form/div[8]/button'
+        elif 'au-freak' in link:
+            # Use the second XPath for the second link
+            sign_up_button_xpath = '/html/body/div[3]/div[3]/div/div[3]/form/div[8]/button'
+        else:
+            print('Unsupported link')
+            return
+
+        sign_up_button = wait.until(EC.element_to_be_clickable((By.XPATH, sign_up_button_xpath)))
+        sign_up_button.click()
+        # Wait for navigation to complete
+        time.sleep(10)  # You may need to adjust the waiting time
+        
+        # Check the current URL
+        current_url = driver.current_url
+        print(f'Current URL: {current_url}')
+
+        # Verify the URL
+        if 'https://www.kingbillycasino6.com/de' in current_url:
+            print('URL verification passed.')
+            verification_result = f'URL Verification Passed for Link: {link} - Loaded URL: {current_url}\n'
+        else:
+            print('URL verification failed.')
+            verification_result = f'URL Verification Failed for Link: {link} - Loaded URL: {current_url}\n'
+
+        # Write link and actions to the log file
+        with open('automated_registration_logs.txt', 'a') as log_file:
+            log_file.write(f'Link: {link}\n')
+            log_file.write('Actions:\n')
+            log_file.write(f'1. Navigated to: {link}\n')
+            log_file.write('2. Clicked "GET IT NOW" button\n')
+            log_file.write(f'3. Filled in email input with: {random_email}\n')
+            log_file.write('4. Filled in password input with: 193786Az()\n')
+            log_file.write('5. Clicked "Sign up now" button\n')
+            log_file.write(f'6. {verification_result}')
+            log_file.write('------------------------\n')
+            
+        driver.quit()
+            
+    except Exception as e:
+        print(f'Error: {str(e)}')
+
+# Function to generate a random email
+def generate_random_email():
+    import random
+    import string
+    random_word = ''.join(random.choice(string.ascii_lowercase) for _ in range(10))
+    return f'{random_word}@kbc.pp.ua'
+
+if __name__ == "__main__":
+    # Provide the list of links here
+    links_to_test = ["https://lp.kbtraf.com/au-bfc", "https://lp.kbtraf.com/au-freak/"]
+
+# Loop through the list of links and perform registration
+for link in links_to_test:
+    perform_registration(link)
+    driver = webdriver.Chrome()
