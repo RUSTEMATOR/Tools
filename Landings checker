@@ -4,17 +4,17 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# List of links to test
+
 links_to_test = [
     'https://lp.kbtraf.com/au-bfc/',
     'https://lp.kbtraf.com/au-freak/',
     # Add more links as needed
 ]
 
-# Initialize the Safari driver
+
 driver = webdriver.Chrome()
 
-# Function to perform registration and testing
+
 def perform_registration(link):
     try:
         # Navigate to the link
