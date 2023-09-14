@@ -1,0 +1,204 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+from faker import Faker
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+
+links_to_test = [
+    'https://lp.kingbilly.com/ca-bfc/',
+    'https://lp.kingbilly.com/ca-freak/',
+    # Add more links as needed
+]
+
+driver = webdriver.Chrome()
+driver.implicitly_wait(15)
+
+def perform_registration(link):
+    try:
+        # Navigate to the link
+        print(f'Navigating to: {link}')
+        driver.get(link)
+        
+        # Click the "GET IT NOW" button by XPath (if it doesn't have an ID)
+        print('Clicking "GET IT NOW" button')
+        wait = WebDriverWait(driver, 10)
+        get_it_now_button = wait.until(EC.element_to_be_clickable((By.ID, 'submit-btn')))
+        get_it_now_button.click()
+        
+        # Find and fill in the email input by ID
+        email_input = driver.find_element(By.ID, 'email')
+        random_email = generate_random_email()
+        print(f'Filling in email input with: {random_email}')
+        email_input.send_keys(random_email)
+        
+        # Write email to the log file
+        with open('test_accs_automation.txt', 'a') as file:
+            file.write(random_email + '\n')
+        
+        # Find and fill in the password input by ID
+        password_input = driver.find_element(By.ID, 'password')
+        print('Filling in password input with: 193786Az()')
+        password_input.send_keys('193786Az()')
+        
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        
+    try:       
+        driver.execute_script('''
+        var checkbox = document.querySelector('label.label_radio::before');
+        checkbox.style.content = "✔";
+        ''')
+
+    except Exception as e:
+        print(f'Error while interacting with the checkbox: {str(e)}')
+    
+        # Click the "Next" button
+        check_box = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[1]/div[5]/div[1]/label[1]')
+        check_box.click()
+        
+        next_button = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[1]/div[8]/button')
+        next_button.click()
+        
+        # Generate random name and surname using Faker
+        fake = Faker()
+        first_name = fake.first_name()
+        surname = fake.last_name()
+        
+        # Fill in First name input
+        first_name_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[1]/input')
+        first_name_input.send_keys(first_name)
+        
+        # Fill in surname input 
+        surname_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[2]/input')
+        surname_input.send_keys(surname)
+        
+        # Choose 03, 03 and 1999 from the day, month and year dropdown lists
+        day_dropdown = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[3]/div[1]/select[1]')
+        month_dropdown = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[3]/div[1]/select[2]')
+        year_dropdown = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[3]/div[1]/select[3]')
+        day_dropdown.send_keys('3')
+        month_dropdown.send_keys('3')
+        year_dropdown.send_keys('1999')
+        
+        # Press on "Male" button
+        male_button = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[2]/div/div/button[1]')
+        male_button.click()
+        
+        # Press on "Next" button
+        next_button_2 = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[4]/button[2]')
+        next_button_2.click()
+
+        
+        
+    # Find the input element by its ID or any suitable selector
+        input_element = driver.find_element(By.ID, "tel-input")  # You can use other methods to select the element too
+
+        # Get the placeholder attribute value
+        placeholder_value = input_element.get_attribute("placeholder")
+
+        # Clear the input field first (in case it already contains text)
+        input_element.clear()
+
+        # Set the input's value to the placeholder value
+        input_element.send_keys(placeholder_value)
+        
+        # Fill in city input with "Besttester"
+        city_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[1]/div[1]/input')
+        city_input.send_keys('Besttester')
+        
+        # Fill in address input with "Scripting street 23"
+        address_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[1]/div[2]/input')
+        address_input.send_keys('Scripting street 23')
+        
+         # Fill in postal code input with 1234
+        postal_code_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[1]/div[3]/input')
+        postal_code_input.send_keys('1234')
+        postal_code_input.send_keys(Keys.TAB)
+
+        
+    # Find the input element by its ID or any suitable selector
+        input_element = driver.find_element(By.ID, "tel-input")  # You can use other methods to select the element too
+
+        # Get the placeholder attribute value
+        placeholder_value = input_element.get_attribute("placeholder")
+
+        # Set the input's value to the placeholder value
+        input_element.send_keys(placeholder_value)
+            
+    try:
+         # Now you can locate the tel-input element within the shadow DOM
+        tel_input_element = driver.find_element(By.ID, 'tel-input')
+
+        # Fill in the phone number input with the needed number
+        tel_input_element.send_keys('0351 25 84 71 ')
+
+        
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        
+        # Press on "Create Account" button
+        create_account_button = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[3]/button[2]')
+        create_account_button.click()
+        
+
+        # Wait for navigation to complete
+        time.sleep(5)  # You may need to adjust the waiting time
+        
+        # Check the current URL
+        current_url = driver.current_url
+        print(f'Current URL: {current_url}')
+
+        # Verify the URL
+        if 'https://www.kingbillycasino6.com/de' in current_url:
+            print('URL verification passed.')
+            verification_result = f'URL Verification Passed for Link: {link} - Loaded URL: {current_url}\n'
+        else:
+            print('URL verification failed.')
+            verification_result = f'URL Verification Failed for Link: {link} - Loaded URL: {current_url}\n'
+
+        # Write link and actions to the log file
+        with open('automated_registration_logs.txt', 'a') as log_file:
+            log_file.write(f'Link: {link}\n')
+            log_file.write('Actions:\n')
+            log_file.write(f'1. Navigated to: {link}\n')
+            log_file.write('2. Clicked "GET IT NOW" button\n')
+            log_file.write(f'3. Filled in email input with: {random_email}\n')
+            log_file.write('4. Filled in password input with: 193786Az()\n')
+            log_file.write('5. Checked the "I am 18 years old and I accept Terms and Conditions and Privacy Policy" checkbox\n')
+            log_file.write('6. Clicked "Next" button\n')
+            log_file.write('7. Filled in First name input with "Automated"\n')
+            log_file.write(f'8. Filled in surname input with "Test{surname}"\n')
+            log_file.write('9. Chose 03, 03 and 1999 from the day, month, and year dropdown lists\n')
+            log_file.write('10. Pressed on "Male" button\n')
+            log_file.write('11. Pressed on "Next" button\n')
+            log_file.write('12. Filled in city input with "Besttester"\n')
+            log_file.write('13. Filled in address input with "Scripting street 23"\n')
+            log_file.write('14. Filled in postal code input with "1234"\n')
+            log_file.write('15. Filled in the phone number input with "0771 36 42 06"\n')
+            log_file.write('16. Pressed on "Create Account" button\n')
+            log_file.write(f'17. {verification_result}')
+            log_file.write('------------------------\n')
+            
+        driver.quit()
+            
+    except Exception as e:
+        print(f'Error: {str(e)}')
+
+# Function to generate a random email
+def generate_random_email():
+    import random
+    import string
+    random_word = ''.join(random.choice(string.ascii_lowercase) for _ in range(10))
+    return f'{random_word}@kbc.pp.ua'
+
+if __name__ == "__main__":
+    # Provide the list of links here
+    links_to_test = ["https://lp.kingbilly.com/ca-bfc/", "https://lp.kingbilly.com/ca-freak/"]
+
+# Loop through the list of links and perform registration
+for link in links_to_test:
+    perform_registration(link)
+    driver = webdriver.Chrome()
