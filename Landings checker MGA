@@ -5,7 +5,6 @@ from faker import Faker
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
 
 links_to_test = [
     'https://lp.kingbilly.com/ca-bfc/',
@@ -92,19 +91,6 @@ def perform_registration(link):
         next_button_2.click()
 
         
-        
-    # Find the input element by its ID or any suitable selector
-        input_element = driver.find_element(By.ID, "tel-input")  # You can use other methods to select the element too
-
-        # Get the placeholder attribute value
-        placeholder_value = input_element.get_attribute("placeholder")
-
-        # Clear the input field first (in case it already contains text)
-        input_element.clear()
-
-        # Set the input's value to the placeholder value
-        input_element.send_keys(placeholder_value)
-        
         # Fill in city input with "Besttester"
         city_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[1]/div[1]/input')
         city_input.send_keys('Besttester')
@@ -118,26 +104,14 @@ def perform_registration(link):
         postal_code_input.send_keys('1234')
         postal_code_input.send_keys(Keys.TAB)
 
-        
-    # Find the input element by its ID or any suitable selector
-        input_element = driver.find_element(By.ID, "tel-input")  # You can use other methods to select the element too
+    
+    # Знаходження елементу kbc-datepicker
+        datepicker = driver.find_element(By.TAG_NAME, "kbc-datepicker")
 
-        # Get the placeholder attribute value
-        placeholder_value = input_element.get_attribute("placeholder")
-
-        # Set the input's value to the placeholder value
-        input_element.send_keys(placeholder_value)
-            
-    try:
-         # Now you can locate the tel-input element within the shadow DOM
-        tel_input_element = driver.find_element(By.ID, 'tel-input')
-
-        # Fill in the phone number input with the needed number
-        tel_input_element.send_keys('0351 25 84 71 ')
-
-        
-    except Exception as e:
-        print(f'Error: {str(e)}')
+        # Встановлення значення атрибуту value (номер телефону)
+        phone_number = "07145 99 25 82"  # Ваш номер телефону
+        driver.execute_script('arguments[0].setAttribute("value", arguments[1]);', datepicker, phone_number)
+    
         
         # Press on "Create Account" button
         create_account_button = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[3]/button[2]')
