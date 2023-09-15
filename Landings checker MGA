@@ -9,6 +9,10 @@ from selenium.webdriver.common.keys import Keys
 links_to_test = [
     'https://lp.kingbilly.com/ca-bfc/',
     'https://lp.kingbilly.com/ca-freak/',
+    'https://lp.kingbilly.com/welcome_pack_new-blue-nl/',
+    'https://lp.kingbilly.com/nl-his/',
+    'https://lp.kingbilly.com/nl-freak/',
+    'https://lp.kingbilly.com/nl-bfc/'
     # Add more links as needed
 ]
 
@@ -41,24 +45,27 @@ def perform_registration(link):
         password_input = driver.find_element(By.ID, 'password')
         print('Filling in password input with: 193786Az()')
         password_input.send_keys('193786Az()')
+        password_input.send_keys(Keys.TAB)
         
-    except Exception as e:
-        print(f'Error: {str(e)}')
-        
-    try:       
-        driver.execute_script('''
-        var checkbox = document.querySelector('label.label_radio::before');
-        checkbox.style.content = "✔";
-        ''')
-
-    except Exception as e:
-        print(f'Error while interacting with the checkbox: {str(e)}')
     
-        # Click the "Next" button
-        check_box = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[1]/div[5]/div[1]/label[1]')
-        check_box.click()
+        try:
+            check_box = driver.find_element(By.CLASS_NAME, 'label_radio')
+            if check_box is not None:
+                # If the element was found, click it
+                check_box.click()
+            else:
+                print("Checkbox element not found")
+
+            # You can use JavaScript to set the checkbox state directly
+            driver.execute_script('''
+                var checkbox = document.querySelector('label.label_radio::before');
+                checkbox.style.content = "✔";
+            ''')
         
-        next_button = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[1]/div[8]/button')
+        except Exception as e:
+            print(f'Error while interacting with the checkbox: {str(e)}')
+        
+        next_button = driver.find_element(By.ID, 'second_step')
         next_button.click()
         
         # Generate random name and surname using Faker
@@ -67,42 +74,42 @@ def perform_registration(link):
         surname = fake.last_name()
         
         # Fill in First name input
-        first_name_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[1]/input')
+        first_name_input = driver.find_element(By.ID, 'first-name')
         first_name_input.send_keys(first_name)
         
         # Fill in surname input 
-        surname_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[2]/input')
+        surname_input = driver.find_element(By.ID, 'last-name')
         surname_input.send_keys(surname)
         
         # Choose 03, 03 and 1999 from the day, month and year dropdown lists
-        day_dropdown = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[3]/div[1]/select[1]')
-        month_dropdown = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[3]/div[1]/select[2]')
-        year_dropdown = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[1]/div[3]/div[1]/select[3]')
+        day_dropdown = driver.find_element(By.ID, 'date-of-birth-dd')
+        month_dropdown = driver.find_element(By.ID, 'date-of-birth-mm')
+        year_dropdown = driver.find_element(By.ID, 'date-of-birth-yy')
         day_dropdown.send_keys('3')
         month_dropdown.send_keys('3')
         year_dropdown.send_keys('1999')
         
         # Press on "Male" button
-        male_button = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[2]/div/div/button[1]')
+        male_button = driver.find_element(By.ID, 'm')
         male_button.click()
         
         # Press on "Next" button
-        next_button_2 = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[2]/div[4]/button[2]')
+        next_button_2 = driver.find_element(By.ID, 'last_step')
         next_button_2.click()
 
         
         # Fill in city input with "Besttester"
-        city_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[1]/div[1]/input')
+        city_input = driver.find_element(By.ID, 'city')
         city_input.send_keys('Besttester')
         
         # Fill in address input with "Scripting street 23"
-        address_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[1]/div[2]/input')
+        address_input = driver.find_element(By.ID, 'address')
         address_input.send_keys('Scripting street 23')
         
          # Fill in postal code input with 1234
-        postal_code_input = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[1]/div[3]/input')
+        postal_code_input = driver.find_element(By.ID, 'postal-code')
         postal_code_input.send_keys('1234')
-        postal_code_input.send_keys(Keys.TAB)
+      
 
     
     # Знаходження елементу kbc-datepicker
@@ -114,7 +121,7 @@ def perform_registration(link):
     
         
         # Press on "Create Account" button
-        create_account_button = driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/div/div[3]/form/div[3]/div[3]/button[2]')
+        create_account_button = driver.find_element(By.NAME, 'send_data')
         create_account_button.click()
         
 
@@ -126,7 +133,7 @@ def perform_registration(link):
         print(f'Current URL: {current_url}')
 
         # Verify the URL
-        if 'https://www.kingbillycasino6.com/de' in current_url:
+        if 'https://www.kingbilly.com' in current_url:
             print('URL verification passed.')
             verification_result = f'URL Verification Passed for Link: {link} - Loaded URL: {current_url}\n'
         else:
@@ -170,7 +177,15 @@ def generate_random_email():
 
 if __name__ == "__main__":
     # Provide the list of links here
-    links_to_test = ["https://lp.kingbilly.com/ca-bfc/", "https://lp.kingbilly.com/ca-freak/"]
+    links_to_test = [
+    'https://lp.kingbilly.com/ca-bfc/',
+    'https://lp.kingbilly.com/ca-freak/',
+    'https://lp.kingbilly.com/welcome_pack_new-blue-nl/',
+    'https://lp.kingbilly.com/nl-his/',
+    'https://lp.kingbilly.com/nl-freak/',
+    'https://lp.kingbilly.com/nl-bfc/'
+    # Add more links as needed
+]
 
 # Loop through the list of links and perform registration
 for link in links_to_test:
