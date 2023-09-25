@@ -6,58 +6,79 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
-links_to_test = [
-    'https://lp.kingbilly.com/ca-bfc/',
-    'https://lp.kingbilly.com/ca-freak/',
-    'https://lp.kingbilly.com/welcome_pack_new-blue-nl/',
-    'https://lp.kingbilly.com/nl-his/',
-    'https://lp.kingbilly.com/nl-freak/',
-    'https://lp.kingbilly.com/nl-bfc/'
-    # Add more links as needed
-]
+class Links():
+    links_to_test = [
+        'https://lp.kingbilly.com/ca-bfc/',
+        'https://lp.kingbilly.com/ca-freak/',
+        'https://lp.kingbilly.com/welcome_pack_new-blue-nl/',
+        'https://lp.kingbilly.com/nl-his/',
+        'https://lp.kingbilly.com/nl-freak/',
+        'https://lp.kingbilly.com/nl-bfc/'
+        # Add more links as needed
+    ]
 
-driver = webdriver.Chrome()
-driver.implicitly_wait(15)
 
-def perform_registration(link):
-    try:
+class TestBase():
+    def setup_method(self):
+        self._driver = webdriver.Chrome()
+        self._driver.implicitly_wait(15)
+
+    def teardown_method(self): 
+        self._driver.quit
+    
+
+class Generator():
+    @staticmethod
+    # Function to generate a random email
+    def generate_random_email():
+        import random
+        import string
+        random_word = ''.join(random.choice(string.ascii_lowercase) for _ in range(10))
+        return f'{random_word}@kbc.pp.ua'
+    
+    def faker(self):
+        first_name = self.fake.first_name()
+        surname = self.fake.last_name()
+
+class Registration(Generator, TestBase, Links):
+    def navigate_to_link(self, link):
         # Navigate to the link
         print(f'Navigating to: {link}')
-        driver.get(link)
+        self._driver.get(link)
         
+    def click_get_it_button(self):
         # Click the "GET IT NOW" button by XPath (if it doesn't have an ID)
         print('Clicking "GET IT NOW" button')
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(self._driver, 10)
         get_it_now_button = wait.until(EC.element_to_be_clickable((By.ID, 'submit-btn')))
         get_it_now_button.click()
         
+    def fill_email(self):    
         # Find and fill in the email input by ID
-        email_input = driver.find_element(By.ID, 'email')
-        random_email = generate_random_email()
+        email_input = self._driver.find_element(By.ID, 'email')
+        random_email = Generator.generate_random_email()
         print(f'Filling in email input with: {random_email}')
         email_input.send_keys(random_email)
-        
         # Write email to the log file
         with open('test_accs_automation.txt', 'a') as file:
             file.write(random_email + '\n')
         
+    def fill_password(self):
         # Find and fill in the password input by ID
-        password_input = driver.find_element(By.ID, 'password')
+        password_input = self._driver.find_element(By.ID, 'password')
         print('Filling in password input with: 193786Az()')
         password_input.send_keys('193786Az()')
         password_input.send_keys(Keys.TAB)
         
-    
+    def click_checkbox(self):
         try:
-            check_box = driver.find_element(By.CLASS_NAME, 'label_radio')
-            if check_box is not None:
+            check_box = self._driver.find_element(By.CLASS_NAME, 'label_radio')
                 # If the element was found, click it
-                check_box.click()
-            else:
-                print("Checkbox element not found")
+            check_box.click()
+            
 
             # You can use JavaScript to set the checkbox state directly
-            driver.execute_script('''
+            self._driver.execute_script('''
                 var checkbox = document.querySelector('label.label_radio::before');
                 checkbox.style.content = "✔";
             ''')
@@ -65,73 +86,83 @@ def perform_registration(link):
         except Exception as e:
             print(f'Error while interacting with the checkbox: {str(e)}')
         
-        next_button = driver.find_element(By.ID, 'second_step')
+
+    def click_next_button(self):    
+        next_button = self._driver.find_element(By.ID, 'second_step')
         next_button.click()
         
+    def fill_first_name(self):    
         # Generate random name and surname using Faker
         fake = Faker()
         first_name = fake.first_name()
-        surname = fake.last_name()
-        
+
         # Fill in First name input
-        first_name_input = driver.find_element(By.ID, 'first-name')
+        first_name_input = self._driver.find_element(By.ID, 'first-name')
         first_name_input.send_keys(first_name)
         
+    def fill_surname(self):
+        fake = Faker()
+        surname = fake.last_name()     
+
         # Fill in surname input 
-        surname_input = driver.find_element(By.ID, 'last-name')
+        surname_input = self._driver.find_element(By.ID, 'last-name')
         surname_input.send_keys(surname)
         
+    def fill_birth_date(self):    
         # Choose 03, 03 and 1999 from the day, month and year dropdown lists
-        day_dropdown = driver.find_element(By.ID, 'date-of-birth-dd')
-        month_dropdown = driver.find_element(By.ID, 'date-of-birth-mm')
-        year_dropdown = driver.find_element(By.ID, 'date-of-birth-yy')
+        day_dropdown = self._driver.find_element(By.ID, 'date-of-birth-dd')
+        month_dropdown = self._driver.find_element(By.ID, 'date-of-birth-mm')
+        year_dropdown = self._driver.find_element(By.ID, 'date-of-birth-yy')
         day_dropdown.send_keys('3')
         month_dropdown.send_keys('3')
         year_dropdown.send_keys('1999')
-        
+    
+    def choose_gender(self):
         # Press on "Male" button
-        male_button = driver.find_element(By.ID, 'm')
+        male_button = self._driver.find_element(By.ID, 'm')
         male_button.click()
-        
+    
+    def press_next_button(self):
         # Press on "Next" button
-        next_button_2 = driver.find_element(By.ID, 'last_step')
+        next_button_2 = self._driver.find_element(By.ID, 'last_step')
         next_button_2.click()
 
-        
+    def fill_city(self):
         # Fill in city input with "Besttester"
-        city_input = driver.find_element(By.ID, 'city')
+        city_input = self._driver.find_element(By.ID, 'city')
         city_input.send_keys('Besttester')
         
+    def fill_address(self):    
         # Fill in address input with "Scripting street 23"
-        address_input = driver.find_element(By.ID, 'address')
+        address_input = self._driver.find_element(By.ID, 'address')
         address_input.send_keys('Scripting street 23')
         
+    def fill_postal_code(self):    
          # Fill in postal code input with 1234
-        postal_code_input = driver.find_element(By.ID, 'postal-code')
+        postal_code_input = self._driver.find_element(By.ID, 'postal-code')
         postal_code_input.send_keys('1234')
       
 
+    def assign_value_datapicker(self):
+        datepicker = self._driver.find_element(By.TAG_NAME, "kbc-datepicker")
+        # Assigning value (phone number)
+        phone_number = "07145 99 25 82" 
+        self._driver.execute_script('arguments[0].setAttribute("value", arguments[1]);', datepicker, phone_number)
     
-    # Знаходження елементу kbc-datepicker
-        datepicker = driver.find_element(By.TAG_NAME, "kbc-datepicker")
-
-        # Встановлення значення атрибуту value (номер телефону)
-        phone_number = "07145 99 25 82"  # Ваш номер телефону
-        driver.execute_script('arguments[0].setAttribute("value", arguments[1]);', datepicker, phone_number)
     
-        
+    def press_create_button(self):
         # Press on "Create Account" button
-        create_account_button = driver.find_element(By.NAME, 'send_data')
+        create_account_button = self._driver.find_element(By.NAME, 'send_data')
         create_account_button.click()
-        
 
-        # Wait for navigation to complete
-        time.sleep(5)  # You may need to adjust the waiting time
-        
+
+    def check_url(self):
         # Check the current URL
-        current_url = driver.current_url
+        current_url = self._driver.current_url
         print(f'Current URL: {current_url}')
 
+    def verify_url(self, link):
+        current_url = registration._driver.current_url
         # Verify the URL
         if 'https://www.kingbilly.com' in current_url:
             print('URL verification passed.')
@@ -140,54 +171,32 @@ def perform_registration(link):
             print('URL verification failed.')
             verification_result = f'URL Verification Failed for Link: {link} - Loaded URL: {current_url}\n'
 
-        # Write link and actions to the log file
-        with open('automated_registration_logs.txt', 'a') as log_file:
-            log_file.write(f'Link: {link}\n')
-            log_file.write('Actions:\n')
-            log_file.write(f'1. Navigated to: {link}\n')
-            log_file.write('2. Clicked "GET IT NOW" button\n')
-            log_file.write(f'3. Filled in email input with: {random_email}\n')
-            log_file.write('4. Filled in password input with: 193786Az()\n')
-            log_file.write('5. Checked the "I am 18 years old and I accept Terms and Conditions and Privacy Policy" checkbox\n')
-            log_file.write('6. Clicked "Next" button\n')
-            log_file.write('7. Filled in First name input with "Automated"\n')
-            log_file.write(f'8. Filled in surname input with "Test{surname}"\n')
-            log_file.write('9. Chose 03, 03 and 1999 from the day, month, and year dropdown lists\n')
-            log_file.write('10. Pressed on "Male" button\n')
-            log_file.write('11. Pressed on "Next" button\n')
-            log_file.write('12. Filled in city input with "Besttester"\n')
-            log_file.write('13. Filled in address input with "Scripting street 23"\n')
-            log_file.write('14. Filled in postal code input with "1234"\n')
-            log_file.write('15. Filled in the phone number input with "0771 36 42 06"\n')
-            log_file.write('16. Pressed on "Create Account" button\n')
-            log_file.write(f'17. {verification_result}')
-            log_file.write('------------------------\n')
             
-        driver.quit()
-            
-    except Exception as e:
-        print(f'Error: {str(e)}')
-
-# Function to generate a random email
-def generate_random_email():
-    import random
-    import string
-    random_word = ''.join(random.choice(string.ascii_lowercase) for _ in range(10))
-    return f'{random_word}@kbc.pp.ua'
+        self._driver.quit
 
 if __name__ == "__main__":
-    # Provide the list of links here
-    links_to_test = [
-    'https://lp.kingbilly.com/ca-bfc/',
-    'https://lp.kingbilly.com/ca-freak/',
-    'https://lp.kingbilly.com/welcome_pack_new-blue-nl/',
-    'https://lp.kingbilly.com/nl-his/',
-    'https://lp.kingbilly.com/nl-freak/',
-    'https://lp.kingbilly.com/nl-bfc/'
-    # Add more links as needed
-]
+    links_to_test = Links.links_to_test
 
-# Loop through the list of links and perform registration
-for link in links_to_test:
-    perform_registration(link)
-    driver = webdriver.Chrome()
+    for link in Links.links_to_test:
+        registration = Registration()
+        registration.setup_method()
+        registration.navigate_to_link(link)
+        registration.click_get_it_button()
+        registration.fill_email()
+        registration.fill_password()
+        registration.click_checkbox()
+        registration.click_next_button()
+        registration.fill_first_name()
+        registration.fill_surname()
+        registration.fill_birth_date()
+        registration.choose_gender()
+        registration.press_next_button()
+        registration.fill_city()
+        registration.fill_address()
+        registration.fill_postal_code()
+        registration.assign_value_datapicker()
+        registration.press_create_button()
+        time.sleep(5)
+        registration.check_url()
+        verification_result = registration.verify_url(link)
+        registration.teardown_method()  
