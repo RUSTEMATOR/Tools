@@ -32,8 +32,9 @@ class Generator():
     def generate_random_email():
         import random
         import string
+        random_numbers = ''.join(random.choice(string.digits) for _ in range(5))
         random_word = ''.join(random.choice(string.ascii_lowercase) for _ in range(10))
-        return f'{random_word}@kbc.pp.ua'
+        return f'{random_word}{random_numbers}@kbc.pp.ua'
 
 
 @allure.title("Test Registration")
@@ -52,22 +53,34 @@ class Registration(Generator, TestBase, Links):
         get_it_now_button.click()
 
     @allure.step("Fill in email input") 
-    def fill_email(self):    
-        # Find and fill in the email input by ID
-        email_input = self._driver.find_element(By.ID, 'email')
-        random_email = Generator.generate_random_email()
-        print(f'Filling in email input with: {random_email}')
-        email_input.send_keys(random_email)
-        # Write email to the log file
-        with open('test_accs_automation.txt', 'a') as file:
-            file.write(random_email + '\n')
+    def fill_email(self):
+        try:
+            # Find and fill in the email input by ID
+            email_input = self._driver.find_element(By.ID, 'email')
+            random_email = Generator.generate_random_email()
+            print(f'Filling in email input with: {random_email}')
+            email_input.send_keys(random_email)
+            # Write email to the log file
+            with open('test_accs_automation.txt', 'a') as file:
+                file.write(random_email + '\n')
+                
+            allure.attach(self._driver.get_screenshot_as_png(), name="Fill_Email", attachment_type=allure.attachment_type.PNG)
+        except Exception as e:
+            allure.attach(self._driver.get_screenshot_as_png(), name="Fill_Email_Failure", attachment_type=allure.attachment_type.PNG)
+            raise e
         
     @allure.step("Fill in password") 
     def fill_password(self):
-        # Find and fill in the password input by ID
-        password_input = self._driver.find_element(By.ID, 'password')
-        print('Filling in password input with: 193786Az()')
-        password_input.send_keys('193786Az()')
+        try:
+            # Find and fill in the password input by ID
+            password_input = self._driver.find_element(By.ID, 'password')
+            print('Filling in password input with: 193786Az()')
+            password_input.send_keys('193786Az()')
+            
+            allure.attach(self._driver.get_screenshot_as_png(), name="Fill_password", attachment_type=allure.attachment_type.PNG)
+        except Exception as e:
+            allure.attach(self._driver.get_screenshot_as_png(), name="Fill_password_Failure", attachment_type=allure.attachment_type.PNG)
+            raise e
     
     @allure.step("Write list of accs in a separate document")
     def write_accs_list(self):
@@ -75,19 +88,34 @@ class Registration(Generator, TestBase, Links):
         # Write email to the log file
         with open('test_accs_automation.txt', 'a') as file:
             file.write(random_email + '\n')
+
+        
     
     @allure.step("Wait for the Sign up button to appear")
     def wait_for_element(self):
-        # Wait for "Sign up now" button to be clickable based on the determined XPath
-        print('Waiting for "Sign up now" button to be clickable')
-        wait = WebDriverWait(self._driver, 3)
+        try:
+            # Wait for "Sign up now" button to be clickable based on the determined XPath
+            print('Waiting for "Sign up now" button to be clickable')
+            wait = WebDriverWait(self._driver, 3)
+            
+            allure.attach(self._driver.get_screenshot_as_png(), name="wait_for_element", attachment_type=allure.attachment_type.PNG)
+        except Exception as e:
+            allure.attach(self._driver.get_screenshot_as_png(), name="wait_for_element_Failure", attachment_type=allure.attachment_type.PNG)
+            raise e
 
     @allure.step("Click Sign up button")
     def sign_up(self):
-        sign_up_button = self._driver.find_element(By.CSS_SELECTOR, "#reg-form > div.form_box.form_box__submit")
-        sign_up_button.click()
-        # Wait for navigation to complete
-        time.sleep(10)  # You may need to adjust the waiting time
+        try:
+            sign_up_button = self._driver.find_element(By.CSS_SELECTOR, "#reg-form > div.form_box.form_box__submit")
+            sign_up_button.click()
+            # Wait for navigation to complete
+            time.sleep(10)  # You may need to adjust the waiting time
+        
+            allure.attach(self._driver.get_screenshot_as_png(), name="sign_up", attachment_type=allure.attachment_type.PNG)
+        except Exception as e:
+            allure.attach(self._driver.get_screenshot_as_png(), name="sign_up_Failure", attachment_type=allure.attachment_type.PNG)
+            raise e
+        
         
         # Check the current URL
         current_url = self._driver.current_url
@@ -95,14 +123,20 @@ class Registration(Generator, TestBase, Links):
 
     @allure.step("Verify Step")
     def verify_url(self, link):
-        current_url = self._driver.current_url
-        # Verify the URL
-        if 'https://www.kingbillycasino6.com/de' in current_url:
-            print('URL verification passed.')
-            verification_result = f'URL Verification Passed for Link: {link} - Loaded URL: {current_url}\n'
-        else:
-            print('URL verification failed.')
-            verification_result = f'URL Verification Failed for Link: {link} - Loaded URL: {current_url}\n'
+        try:
+            current_url = self._driver.current_url
+            # Verify the URL
+            if 'https://www.kingbillycasino6.com/de' in current_url:
+                print('URL verification passed.')
+                verification_result = f'URL Verification Passed for Link: {link} - Loaded URL: {current_url}\n'
+            else:
+                print('URL verification failed.')
+                verification_result = f'URL Verification Failed for Link: {link} - Loaded URL: {current_url}\n'
+            
+            allure.attach(self._driver.get_screenshot_as_png(), name="Verify_url", attachment_type=allure.attachment_type.PNG)
+        except Exception as e:
+            allure.attach(self._driver.get_screenshot_as_png(), name="Verify_url_Failure", attachment_type=allure.attachment_type.PNG)
+            raise e
 
 
 
@@ -121,4 +155,6 @@ def test_registration(link):
     time.sleep(3)
     registration.verify_url(link)
     registration.teardown_method()
+
+
 
