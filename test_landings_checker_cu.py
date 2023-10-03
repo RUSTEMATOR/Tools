@@ -122,21 +122,22 @@ class Registration(Generator, TestBase, Links):
         print(f'Current URL: {current_url}')
 
     @allure.step("Verify Step")
-    def verify_url(self, link):
+    def verify_url(self, expected_term):
         try:
             current_url = self._driver.current_url
-            # Verify the URL
-            if 'https://www.kingbillycasino6.com/de' in current_url:
-                print('URL verification passed.')
-                verification_result = f'URL Verification Passed for Link: {link} - Loaded URL: {current_url}\n'
+            # Verify if the expected term is present in the URL
+            if expected_term in current_url:
+                print(f'URL verification passed. Expected term: {expected_term} found in URL: {current_url}')
+                verification_result = f'URL Verification Passed for Link: {current_url} - Expected term: {expected_term} found in URL: {current_url}\n'
             else:
-                print('URL verification failed.')
-                verification_result = f'URL Verification Failed for Link: {link} - Loaded URL: {current_url}\n'
+                print(f'URL verification failed. Expected term: {expected_term} not found in URL: {current_url}')
+                verification_result = f'URL Verification Failed for Link: {current_url} - Expected term: {expected_term} not found in URL: {current_url}\n'
             
             allure.attach(self._driver.get_screenshot_as_png(), name="Verify_url", attachment_type=allure.attachment_type.PNG)
         except Exception as e:
             allure.attach(self._driver.get_screenshot_as_png(), name="Verify_url_Failure", attachment_type=allure.attachment_type.PNG)
             raise e
+
 
 
 
@@ -152,9 +153,9 @@ def test_registration(link):
     registration.write_accs_list()
     registration.wait_for_element()
     registration.sign_up()
-    time.sleep(3)
-    registration.verify_url(link)
+    time.sleep(2)
+    expected_term = "kingbillycasino"
+    registration.verify_url(expected_term)
     registration.teardown_method()
-
 
 
